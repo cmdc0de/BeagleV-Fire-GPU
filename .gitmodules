@@ -1,0 +1,3 @@
+[submodule "support/gateware"]
+	path = support/gateware
+	url = https://openbeagle.org/beaglev-fire/gateware.git
