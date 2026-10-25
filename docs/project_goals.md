@@ -62,58 +62,24 @@ Linux self-programming ignores a bitstream whose design version matches the one 
 
 1. **This file is the index.** Every feature has a short description here. Milestone membership and slice membership are recorded here. A change to either updates this file in that same change.
 2. **Feature files are optional.** Add `docs/features/<id>-<name>.md` when a feature needs a register map, a pin map, a state machine, a coherency rule, or any other design that does not fit in the summary. Link it from the feature entry. If the summary and the feature file disagree, fix them in the same change. The summary stays accurate either way.
-3. **Slices are the check-in unit.** Each slice has a directory created when the slice becomes `active`:
+3. **Slices are the check-in unit.** `/spec` picks the features for the next slice that does not already have a plan. The procedure is `.grok/skills/spec/SKILL.md`. It writes two files, with `n` the milestone number and `x` the slice number (`S0.4` is `m0s4`):
 
    ```
-   docs/milestones/<milestone>/slices/<slice>/
-     goals.md
-     implementation.md
-     test.md
+   docs/slices/m{n}s{x}-plan.md
+   docs/slices/m{n}s{x}-test-plan.md
    ```
 
-   `goals.md` says what done means, which features the slice touches, and what is deliberately left out.
-   `test.md` is the procedure: setup, steps, and expected results (screen, dmesg, register values, or a simulation log).
-   `implementation.md` records what the code does not make obvious: pin and timing choices, new offsets, skipped addresses, fabric utilization when a bitstream was built, and the result of running `test.md`. It can be short.
+   The plan says what that slice will implement. The test plan is the step-by-step way to test it. When `/spec` places a feature, it records the milestone and slice on that feature in this file and leaves the status `planned`. A feature becomes `done` only when `/implement-m close` runs after that test plan has passed. The M0 guides already in `docs/milestones/M0-setup/` count as plans for those slices.
 
-   Write `goals.md` and `test.md` when the slice starts. Fill `implementation.md` as decisions are made. A slice is `done` when `test.md` has been run and the result is written into `implementation.md`.
+4. **One active slice.** `/implement-m` builds the last agreed spec and then stops. The user walks the test plan. `/implement-m close` marks that slice's features `done`, commits, pushes, and tags the repo `m{n}s{x}`. The procedure is `.grok/skills/implement-m/SKILL.md`. A second slice may be active only when the first is blocked on the board, a license, or a panel. Parking-lot work does not start beside an active slice.
 
-   Do not create the full slice tree up front. The tables in this file are the plan. M0 is the exception: its `goals.md` files are the step-by-step setup guides, and they are written as part of defining the milestone.
-
-4. **One active slice.** That slice is the next thing to call done. A second slice may be active only when the first is blocked on the board, a license, or a panel. Parking-lot work does not start beside an active slice.
-5. **The test is the acceptance bar.** A slice that cannot be checked from `test.md` is not done. Pure logic slices (register file, SPI shifter, fill) name a simulation in `test.md`. Slices that touch pins, the panel, or Linux also name a board procedure.
-6. **Offsets stay put.** New registers use new offsets. An offset covered by a done slice stays stable through the end of that milestone. Renumbering is its own slice, and that slice updates every `test.md` that used the old offset.
+5. **The test plan is the acceptance bar.** A slice that cannot be checked from its `m{n}s{x}-test-plan.md` is not done. Pure logic slices name a simulation there. Slices that touch pins, the panel, or Linux also name a board procedure.
+6. **Offsets stay put.** New registers use new offsets. An offset covered by a done slice stays stable through the end of that milestone. Renumbering is its own slice, and that slice updates every test plan that used the old offset.
 7. **HDL is a cape option.** New fabric logic is a directory under `script_support/components/CAPE/`, selected with `CAPE_OPTION`, following the gateware README. The bitstream builder is the build. Libero GUI edits that are not saved back into Tcl or Verilog are not part of the design.
 8. **Panel and geometry are data.** Init sequences, size, and orientation live in a table or the device tree. The scanout state machine stays independent of one panel’s command list. Slice S3.1 is where the first panel and its cape pins are chosen.
 9. **Output stage is a boundary.** SPI is one module behind the pixel source. Later output changes replace that module.
-10. **Record fabric use.** Any slice that produces a bitstream writes logic-element, RAM, and math-block counts into its `implementation.md`. After S7.2, if the GPU block is still a small fraction of the 23K logic elements, pull the cursor (F16), the palette (F17), or a nearest-neighbor texture instruction in from the parking lot before adding a new idea.
-11. **Done slice docs stay as history.** A later slice supersedes them by saying so in its `goals.md`. Completed `goals.md` files are not rewritten to match a newer plan.
-
-### Slice doc shape
-
-`goals.md`
-
-- Slice id and name
-- Goal, in one paragraph
-- Features touched
-- In this slice
-- Out of this slice
-- Done when
-
-`test.md`
-
-- Setup (board, cable, panel, bitstream design version, kernel)
-- Steps
-- Expected results
-- Pass record (date, design version, result)
-
-`implementation.md`
-
-- What landed
-- Decisions
-- Register, pin, and device-tree changes
-- Fabric utilization, when a bitstream was built
-- Test result
-- Follow-ups
+10. **Record fabric use.** Any slice that produces a bitstream writes logic-element, RAM, and math-block counts into its plan under an implementation-notes heading, added when the slice is built. `/spec` does not write those notes. After S7.2, if the GPU block is still a small fraction of the 23K logic elements, pull the cursor (F16), the palette (F17), or a nearest-neighbor texture instruction in from the parking lot before adding a new idea.
+11. **Done slice docs stay as history.** A later slice supersedes an earlier one by saying so in its own plan. Completed plans and test plans are not rewritten to match a newer plan. The M0 `implementation.md` files under `docs/milestones/M0-setup/` stay the notes for those guides.
 
 ## Features
 
@@ -357,8 +323,9 @@ Done when a userspace program submits a mesh and the panel shows it flat-shaded 
 ```
 docs/project_goals.md
 docs/features/                          one file per feature, only when needed
-docs/milestones/M0-setup/slices/          step-by-step laptop and board guides
-docs/milestones/<milestone>/slices/<slice>/{goals,implementation,test}.md
+docs/slices/m{n}s{x}-plan.md            written by /spec
+docs/slices/m{n}s{x}-test-plan.md       written by /spec
+docs/milestones/M0-setup/slices/        M0 laptop and board guides, already written
 scripts/check-env.py                    M0 install check, --host and --board
 kernel/                                 out-of-tree module
 userspace/                              tests named by the slice test docs
@@ -410,3 +377,5 @@ These are the choices the tables above already assume. Replace any of them by ed
 | 2026-10-25 | Eight milestones, M0–M7. M0 is F0: install the host and board tools, then `scripts/check-env.py` must exit 0. The old tooling-and-bitstream milestone is now M1. The original first-milestone definition of done is the end of M3. |
 | 2026-10-25 | M7 is a fixed-point tile rasterizer (F19) and one fragment shader (F20), then the register-map freeze. Vertex work stays on the RISC-V cores. F16 and F17 moved to the parking lot. |
 | 2026-10-25 | M0 expanded into step-by-step guides: laptop and Libero, Debian on the BeagleV-Fire, boot proof, programming the FPGA from the board, and programming it from the laptop when a FlashPro is attached. |
+| 2026-10-25 | Slice specs are written by `/spec` to `docs/slices/m{n}s{x}-plan.md` and `m{n}s{x}-test-plan.md`. Placing a feature records its milestone and slice in this file. |
+| 2026-10-25 | `/implement-m` builds the last agreed spec and stops for the test-plan walkthrough. `/implement-m close` marks those features done, then commits, pushes, and tags `m{n}s{x}`. |
