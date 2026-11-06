@@ -219,7 +219,7 @@ The original “first milestone” (custom bitstream, pattern on the panel from 
 
 Done when S0.1's test plan has passed, the FPGA has been programmed from the board, and, when a FlashPro programmer is attached, from the laptop as well.
 
-S0.1's spec is `docs/slices/m0s1-plan.md`. The notes under `docs/milestones/M0-setup/` remain source material. The old S0.5 guide is the source for S0.2, and the old S0.6 guide is the source for S0.3, until `/spec` writes those two plans.
+S0.1's spec is `docs/slices/m0s1-plan.md`. S0.2's spec is `docs/slices/m0s2-plan.md`. The notes under `docs/milestones/M0-setup/` remain source material. The old S0.6 guide is the source for S0.3 until `/spec` writes that plan.
 
 | Slice | Name | Delivers |
 | --- | --- | --- |
@@ -375,3 +375,5 @@ These are the choices the tables above already assume. Replace any of them by ed
 | 2026-10-25 | `/implement-m` builds the last agreed spec and stops for the test-plan walkthrough. `/implement-m close` marks those features done, then commits, pushes, and tags `m{n}s{x}`. |
 | 2026-10-25 | S0.1 spec placed F0. `docs/slices/m0s1-plan.md` and `m0s1-test-plan.md`. Laptop tools, Debian boot, and `check-env.py` are S0.1. Programming the FPGA is S0.2 and S0.3. |
 | 2026-11-05 | The bare-metal compiler in S0.1 is `riscv64-unknown-elf-gcc`. That is the name SoftConsole installs and the name the gateware builder invokes. |
+| 2026-11-05 | S0.2 spec written: `docs/slices/m0s2-plan.md` and `m0s2-test-plan.md`. No feature id. Stock `change-gateware.sh default` from the board. |
+| 2026-11-05 | S0.2 test plan passed via `/implement-m close`. No feature ids to mark done. |
