@@ -11,7 +11,7 @@ Not run yet. Fill this in when the laptop is prepared.
 - SoftConsole install path:
 - `FPGENPROG`:
 - `LM_LICENSE_FILE`:
-- `riscv-unknown-elf-gcc` path:
+- `riscv64-unknown-elf-gcc` path:
 - `pfsoc_mss` path:
 
 ## Register, pin, and device-tree changes

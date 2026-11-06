@@ -12,8 +12,8 @@ The build laptop, after following `goals.md`. A new terminal, so the environment
    ```bash
    command -v libero
    command -v pfsoc_mss
-   command -v riscv-unknown-elf-gcc
-   riscv-unknown-elf-gcc --version
+   command -v riscv64-unknown-elf-gcc
+   riscv64-unknown-elf-gcc --version
    test -x "$FPGENPROG" && echo "fpgenprog ok"
    test -d "$LIBERO_INSTALL_DIR" && echo "libero dir ok"
    test -d "$SC_INSTALL_DIR" && echo "softconsole dir ok"
@@ -28,7 +28,7 @@ The build laptop, after following `goals.md`. A new terminal, so the environment
 ## Expected results
 
 - Every `command -v` prints a path.
-- `riscv-unknown-elf-gcc --version` and `dtc --version` print a version.
+- `riscv64-unknown-elf-gcc --version` and `dtc --version` print a version.
 - The three `echo` lines print.
 - Python prints `python ok`.
 - Libero’s window or version text says 2022.3 and does not stop on a license error.

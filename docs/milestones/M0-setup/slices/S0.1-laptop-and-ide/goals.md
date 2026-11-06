@@ -32,7 +32,7 @@ This tree’s gateware builder was tested on Ubuntu 20.04 and on Windows 11. Wri
    pip3 install GitPython PyYAML requests
    ```
 
-2. Create a Microchip account if you do not already have one. Download **Libero SoC v2022.3** for Linux from Microchip’s Libero downloads. Download SoftConsole from the same account. SoftConsole supplies `riscv-unknown-elf-gcc`, which the builder uses for the HSS bootloader.
+2. Create a Microchip account if you do not already have one. Download **Libero SoC v2022.3** for Linux from Microchip’s Libero downloads. Download SoftConsole from the same account. SoftConsole supplies `riscv64-unknown-elf-gcc`, which the builder uses for the HSS bootloader.
 
 3. Run the Libero installer. Beagle’s programming-tools notes recommend a path under the home directory, such as `~/microchip`. Use one tree for Libero and keep the path. The installer also provides FlashPro Express (`FPExpress`) and `fpgenprog`.
 
@@ -44,7 +44,7 @@ This tree’s gateware builder was tested on Ubuntu 20.04 and on Windows 11. Wri
 
    - The directory that contains the `libero` executable. Its parent install root is `LIBERO_INSTALL_DIR`.
    - The `fpgenprog` executable. That full path is `FPGENPROG`.
-   - The directory that contains `riscv-unknown-elf-gcc`, usually inside SoftConsole. It must be on `PATH`.
+   - The directory that contains `riscv64-unknown-elf-gcc`, usually inside SoftConsole. It must be on `PATH`.
    - The directory that contains `pfsoc_mss` (PolarFire SoC MSS Configurator). It must be on `PATH`. It ships with Libero.
 
 7. Put the variables in a file you can source, for example `~/beaglev-fpga-env.sh`:
@@ -53,8 +53,8 @@ This tree’s gateware builder was tested on Ubuntu 20.04 and on Windows 11. Wri
    export LIBERO_INSTALL_DIR=$HOME/microchip/Libero_SoC_v2022.3
    export SC_INSTALL_DIR=$HOME/microchip/SoftConsole
    export FPGENPROG=$HOME/microchip/Libero_SoC_v2022.3/bin/fpgenprog
-   export LM_LICENSE_FILE=$HOME/microchip/license.dat
-   export PATH="$LIBERO_INSTALL_DIR/bin:$SC_INSTALL_DIR/riscv-unknown-elf-gcc/bin:$PATH"
+   export LM_LICENSE_FILE=/licenses/License.dat
+   export PATH="$LIBERO_INSTALL_DIR/bin:<dir-with-riscv64-unknown-elf-gcc>:$PATH"
    ```
 
    Replace every path with the one found in step 6. The `fpgenprog` and toolchain directories above are the usual layout, not a promise. `which` after sourcing the file is the check.
@@ -71,14 +71,14 @@ This tree’s gateware builder was tested on Ubuntu 20.04 and on Windows 11. Wri
    ```bash
    command -v libero
    command -v pfsoc_mss
-   command -v riscv-unknown-elf-gcc
-   riscv-unknown-elf-gcc --version
+   command -v riscv64-unknown-elf-gcc
+   riscv64-unknown-elf-gcc --version
    test -x "$FPGENPROG" && echo "fpgenprog ok"
    dtc --version
    python3 -c "import git, yaml, requests; print('python ok')"
    ```
 
-10. Start Libero and let it obtain a license. A GUI session that reaches the main window is enough. If it stops on a license error, fix `LM_LICENSE_FILE` before continuing. Record the version string Libero prints. It must be 2022.3.
+10. Start the license manager and leave it running: `/licenses/lmgrd -c /licenses/License.dat -l /licenses/License.log`. Then start Libero and let it obtain a license. A GUI session that reaches the main window is enough. If it stops on a license error, read `/licenses/License.log`. Record the version string Libero prints. It must be 2022.3.
 
 ## References
 

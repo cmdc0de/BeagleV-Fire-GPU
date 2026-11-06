@@ -85,9 +85,9 @@ Linux self-programming ignores a bitstream whose design version matches the one 
 
 ### F0. Project software environment
 
-`planned`. Milestone M0.
+`planned`. Milestone M0, slice S0.1.
 
-The build laptop and the BeagleV-Fire are brought up from written, step-by-step guides, then checked by a script. The laptop guide installs the FPGA IDE (Libero SoC 2022.3) and the rest of the gateware toolchain. The board guide downloads a Debian image, installs it on the eMMC, proves Linux booted, and configures the board. Two more guides program the FPGA: one from Linux on the Beagle, which is the path this project uses, and one from the laptop through a FlashPro programmer when that hardware is attached. `scripts/check-env.py` then prints one pass or fail line per tool and exits non-zero when anything required is missing or the wrong version. A package list without the guides does not finish this feature.
+The build laptop has Libero SoC 2022.3, a working license, SoftConsole, both RISC-V cross compilers (`riscv64-unknown-elf-gcc` and `riscv64-linux-gnu-gcc`), Icarus Verilog, and the builder's Python packages and `dtc`. The BeagleV-Fire runs a Debian IoT image from the eMMC. Boot is proved over serial or SSH, with no display. The board also has a compiler, kernel headers, `dtc`, and `change-gateware.sh` installed but not yet run. `scripts/check-env.py` exits 0 on both machines. Programming the fabric is S0.2 and S0.3, and it is not part of this feature.
 
 ### F1. Build and program gateware
 
@@ -217,21 +217,15 @@ The original “first milestone” (custom bitstream, pattern on the panel from 
 
 `planned`. Features: F0.
 
-Done when the step-by-step guides below have been followed on the build laptop and on the BeagleV-Fire, the board has booted the Debian image, the FPGA has been programmed from the board, and `scripts/check-env.py` exits 0 on both machines. Programming from the laptop is part of the milestone when a FlashPro programmer is attached. The guide for that path is always written.
+Done when S0.1's test plan has passed, the FPGA has been programmed from the board, and, when a FlashPro programmer is attached, from the laptop as well.
 
-Each slice’s `goals.md` is the procedure. `test.md` is the proof. `implementation.md` records this machine: distro, installer paths, the exact image file, the disk that was written, and the boot log.
+S0.1's spec is `docs/slices/m0s1-plan.md`. The notes under `docs/milestones/M0-setup/` remain source material. The old S0.5 guide is the source for S0.2, and the old S0.6 guide is the source for S0.3, until `/spec` writes those two plans.
 
-| Slice | Name | Guide |
+| Slice | Name | Delivers |
 | --- | --- | --- |
-| S0.1 | Laptop and FPGA IDE | Prepare the laptop that builds bitstreams. Install Libero SoC 2022.3, the license, SoftConsole, FPGENPROG, and the bare-metal RISC-V gcc. |
-| S0.2 | Laptop project tools | Install Icarus Verilog and the RISC-V Linux cross compiler on that same laptop. |
-| S0.3 | Debian on the BeagleV-Fire | Download the Debian IoT image, write it to the eMMC, and boot it. |
-| S0.4 | Prove boot and configure the board | Show that Linux came up. Set the password, network, compiler, kernel headers, and `dtc`. |
-| S0.5 | Program the FPGA from the Beagle | Copy programming files from the laptop if needed, run `change-gateware.sh` on the board, and show that Linux comes back. |
-| S0.6 | Program the FPGA from the laptop | FlashPro Express over a FlashPro programmer. Run it when the programmer is attached. |
-| S0.7 | Environment check script | `scripts/check-env.py --host` and `--board` cover S0.1, S0.2, and S0.4. Exit 0 only when every required item passes. |
-
-The guides are in `docs/milestones/M0-setup/slices/`.
+| S0.1 | Machines are ready | F0. Laptop FPGA tools, both RISC-V cross compilers, Icarus Verilog, Debian on the eMMC, boot proof with no display, board dev packages, and `scripts/check-env.py`. |
+| S0.2 | Program the FPGA from the Beagle | `change-gateware.sh` programs a gateware directory. The board reboots into Linux on its own. |
+| S0.3 | Program the FPGA from the laptop | FlashPro Express over a FlashPro programmer, when that programmer is attached. |
 
 ### M1. Known-good bitstream
 
@@ -379,3 +373,5 @@ These are the choices the tables above already assume. Replace any of them by ed
 | 2026-10-25 | M0 expanded into step-by-step guides: laptop and Libero, Debian on the BeagleV-Fire, boot proof, programming the FPGA from the board, and programming it from the laptop when a FlashPro is attached. |
 | 2026-10-25 | Slice specs are written by `/spec` to `docs/slices/m{n}s{x}-plan.md` and `m{n}s{x}-test-plan.md`. Placing a feature records its milestone and slice in this file. |
 | 2026-10-25 | `/implement-m` builds the last agreed spec and stops for the test-plan walkthrough. `/implement-m close` marks those features done, then commits, pushes, and tags `m{n}s{x}`. |
+| 2026-10-25 | S0.1 spec placed F0. `docs/slices/m0s1-plan.md` and `m0s1-test-plan.md`. Laptop tools, Debian boot, and `check-env.py` are S0.1. Programming the FPGA is S0.2 and S0.3. |
+| 2026-11-05 | The bare-metal compiler in S0.1 is `riscv64-unknown-elf-gcc`. That is the name SoftConsole installs and the name the gateware builder invokes. |

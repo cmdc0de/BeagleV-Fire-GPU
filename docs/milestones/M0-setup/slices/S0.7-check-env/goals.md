@@ -33,7 +33,7 @@ The script does not install missing tools and it does not program the FPGA. S0.1
    - `LIBERO_INSTALL_DIR` is a directory.
    - `SC_INSTALL_DIR` is a directory.
    - `FPGENPROG` is an executable file.
-   - `riscv-unknown-elf-gcc` is on `PATH` and `--version` exits 0.
+   - `riscv64-unknown-elf-gcc` is on `PATH` and `--version` exits 0.
    - `dtc --version` exits 0.
    - `iverilog -v` exits 0 and the text names Icarus Verilog.
    - `riscv64-linux-gnu-gcc --version` exits 0.
